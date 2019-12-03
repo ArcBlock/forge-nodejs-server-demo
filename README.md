@@ -15,5 +15,5 @@ The server need some environment variables to work:
 - `CHAIN_ID`: Chain ID of the chain
 - `CHAIN_HOST`: The graphQL API server host of the chain
 - `APP_NAME`: dAPP's name
-- `APP_DESCRIPTION`: dAPP's describe
+- `APP_DESCRIPTION`: dAPP's description
 - `BASE_URL`: Base url of server
