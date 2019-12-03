@@ -9,17 +9,6 @@ const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
 const ForgeSDK = require('@arcblock/forge-sdk');
 
-// ------------------------------------------------------------------------------
-// Routes: due to limitations of netlify functions, we need to import routes here
-// ------------------------------------------------------------------------------
-const { decode } = require('../libs/jwt');
-const { handlers, wallet } = require('../libs/auth');
-const loginAuth = require('../routes/auth/login');
-const paymentAuth = require('../routes/auth/payment');
-const checkinAuth = require('../routes/auth/checkin');
-const sessionRoutes = require('../routes/session');
-const paymentsRoutes = require('../routes/payments');
-
 const isProduction = process.env.NODE_ENV === 'production';
 
 if (!process.env.MONGO_URI) {
@@ -89,6 +78,17 @@ server.use((req, res, next) => {
       next();
     });
 });
+
+// ------------------------------------------------------------------------------
+// Routes: due to limitations of netlify functions, we need to import routes here
+// ------------------------------------------------------------------------------
+const { decode } = require('../libs/jwt');
+const { handlers, wallet } = require('../libs/auth');
+const loginAuth = require('../routes/auth/login');
+const paymentAuth = require('../routes/auth/payment');
+const checkinAuth = require('../routes/auth/checkin');
+const sessionRoutes = require('../routes/session');
+const paymentsRoutes = require('../routes/payments');
 
 const router = express.Router();
 
