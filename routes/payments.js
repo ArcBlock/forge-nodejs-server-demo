@@ -11,11 +11,13 @@ module.exports = {
       try {
         if (req.user) {
           const { transactions = [] } = await ForgeSDK.listTransactions({
-            addressFilter: { sender: toAddress(req.user.did), receiver: wallet.address },
+            addressFilter: { sender: toAddress(req.user.did), receiver: wallet.toAddress() },
             typeFilter: { types: ['transfer'] },
           });
 
-          const tx = transactions.find(x => x.code === 'OK' && toBN(x.tx.itxJson.value).eq(fromTokenToUnit(2)));
+          const tx = transactions.find(
+            x => x.code === 'OK' && toBN(x.tx.itxJson.value).eq(fromTokenToUnit(2))
+          );
           if (tx && tx.hash) {
             console.log('api.payments.ok', tx);
             res.json(tx);

@@ -99,7 +99,7 @@ sessionRoutes.init(router);
 paymentsRoutes.init(router);
 
 // Check for application account
-ForgeSDK.getAccountState({ address: wallet.address })
+ForgeSDK.getAccountState({ address: wallet.toAddress() })
   .then(res => {
     if (!res.state) {
       console.log('\n----------');
