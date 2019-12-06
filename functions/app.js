@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const cors = require('cors');
+const compression = require('compression');
 const morgan = require('morgan');
 const express = require('express');
 const serverless = require('serverless-http');
@@ -35,6 +36,7 @@ mongoose.connection.on('reconnected', () => {
 
 // Create and config express application
 const server = express();
+server.use(compression());
 server.use(cookieParser());
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
