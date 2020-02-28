@@ -41,8 +41,7 @@ const walletAuth = new WalletAuthenticator({
     name: env.appName,
     description: env.appDescription,
     icon: 'https://arcblock.oss-cn-beijing.aliyuncs.com/images/wallet-round.png',
-    path: 'https://abtwallet.io/i/',
-    publisher: `did:abt:${wallet.toAddress()}`,
+    link: env.baseUrl,
   },
   chainInfo: {
     host: env.chainHost,
