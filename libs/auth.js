@@ -11,6 +11,9 @@ const {
 } = require('@arcblock/did-auth');
 const env = require('./env');
 
+const netlifyPrefix = '/.netlify/functions/app';
+const isNetlify = process.env.NETLIFY && JSON.parse(process.env.NETLIFY);
+
 const type = WalletType({
   role: Mcrypto.types.RoleType.ROLE_APPLICATION,
   pk: Mcrypto.types.KeyType.ED25519,
@@ -36,12 +39,14 @@ const walletJSON = wallet.toJSON();
 
 const walletAuth = new WalletAuthenticator({
   wallet: walletJSON,
-  baseUrl: env.baseUrl,
+  baseUrl: isNetlify ? env.baseUrl.replace(netlifyPrefix, '') : env.baseUrl,
   appInfo: {
     name: env.appName,
     description: env.appDescription,
     icon: 'https://arcblock.oss-cn-beijing.aliyuncs.com/images/wallet-round.png',
-    link: env.baseUrl,
+    link: isNetlify
+      ? env.baseUrl.replace(netlifyPrefix, '')
+      : env.baseUrl.replace(process.env.PORT || '3030', '3000'),
   },
   chainInfo: {
     host: env.chainHost,
