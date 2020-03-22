@@ -18,10 +18,15 @@ module.exports = {
                 totalSupply
                 unit
               }
+              txConfig {
+                poke {
+                  amount
+                }
+              }
             }
           }
         }`);
-      res.json({ user: req.user, token: data.state.token });
+      res.json({ user: req.user, token: data.state.token, poke: data.state.txConfig.poke });
     });
 
     app.post('/api/did/logout', (req, res) => {
