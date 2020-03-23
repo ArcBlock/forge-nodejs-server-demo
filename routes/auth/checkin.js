@@ -8,10 +8,7 @@ module.exports = {
   action: 'checkin',
   claims: {
     signature: async ({ extraParams: { locale } }) => {
-      const { state } = await ForgeSDK.getForgeState(
-        {},
-        { ignoreFields: ['state.protocols', /\.txConfig$/, /\.gas$/] }
-      );
+      const { state } = await ForgeSDK.getForgeState();
 
       const description = {
         en: `Sign this transaction to receive ${state.txConfig.poke.amount} ${state.token.symbol} for test purpose`,
