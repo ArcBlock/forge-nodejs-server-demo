@@ -2588,6 +2588,11 @@ express-bearer-token@^2.4.0:
     cookie "^0.3.1"
     cookie-parser "^1.4.4"
 
+express-history-api-fallback@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.npm.taobao.org/express-history-api-fallback/download/express-history-api-fallback-2.2.1.tgz#3a2ad27f7bebc90fc533d110d7c6d83097bcd057"
+  integrity sha1-OirSf3vryQ/FM9EQ18bYMJe80Fc=
+
 express-logging@^1.1.1:
   version "1.1.1"
   resolved "https://registry.npm.taobao.org/express-logging/download/express-logging-1.1.1.tgz#62839618cbab5bb3610f1a1c1485352fe9d26c2a"

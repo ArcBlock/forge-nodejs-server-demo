@@ -12,12 +12,10 @@ const description = {
 module.exports = {
   action: 'login',
   claims: {
-    profile: ({ extraParams: { locale } }) => {
-      return {
-        fields: ['fullName', 'email'],
-        description: description[locale] || description.en,
-      };
-    },
+    profile: ({ extraParams: { locale } }) => ({
+      fields: ['fullName', 'email', 'avatar'],
+      description: description[locale] || description.en,
+    }),
   },
   onAuth: async ({ claims, userDid, token, storage }) => {
     try {

@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+const path = require('path');
 const cors = require('cors');
 const compression = require('compression');
 const morgan = require('morgan');
@@ -8,9 +9,11 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
+const fallback = require('express-history-api-fallback');
 const ForgeSDK = require('@arcblock/forge-sdk');
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === 'production' || !!process.env.BLOCKLET_APP_ID;
+const isNetlify = process.env.NETLIFY && JSON.parse(process.env.NETLIFY);
 
 if (!process.env.MONGO_URI) {
   throw new Error('Cannot start application without process.env.MONGO_URI');
@@ -35,14 +38,14 @@ mongoose.connection.on('reconnected', () => {
 });
 
 // Create and config express application
-const server = express();
-server.use(compression());
-server.use(cookieParser());
-server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(cors());
+const app = express();
+app.use(compression());
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
-server.use(
+app.use(
   morgan((tokens, req, res) => {
     const log = [
       tokens.method(req, res),
@@ -63,8 +66,8 @@ server.use(
   })
 );
 
-server.use(bearerToken());
-server.use((req, res, next) => {
+app.use(bearerToken());
+app.use((req, res, next) => {
   if (!req.token) {
     next();
     return;
@@ -75,8 +78,7 @@ server.use((req, res, next) => {
       req.user = user;
       next();
     })
-    .catch(err => {
-      console.error('session.deserialize.error', err.message);
+    .catch(() => {
       next();
     });
 });
@@ -86,19 +88,14 @@ server.use((req, res, next) => {
 // ------------------------------------------------------------------------------
 const { decode } = require('../libs/jwt');
 const { handlers, wallet } = require('../libs/auth');
-const loginAuth = require('../routes/auth/login');
-const paymentAuth = require('../routes/auth/payment');
-const checkinAuth = require('../routes/auth/checkin');
-const sessionRoutes = require('../routes/session');
-const paymentsRoutes = require('../routes/payments');
 
 const router = express.Router();
 
-handlers.attach(Object.assign({ app: router }, loginAuth));
-handlers.attach(Object.assign({ app: router }, checkinAuth));
-handlers.attach(Object.assign({ app: router }, paymentAuth));
-sessionRoutes.init(router);
-paymentsRoutes.init(router);
+handlers.attach(Object.assign({ app: router }, require('../routes/auth/login')));
+handlers.attach(Object.assign({ app: router }, require('../routes/auth/checkin')));
+handlers.attach(Object.assign({ app: router }, require('../routes/auth/payment')));
+require('../routes/session').init(router);
+require('../routes/payments').init(router);
 
 // Check for application account
 ForgeSDK.getAccountState({ address: wallet.toAddress() })
@@ -125,20 +122,32 @@ ForgeSDK.getAccountState({ address: wallet.toAddress() })
 // This is required by netlify functions
 // ------------------------------------------------------
 if (isProduction) {
-  server.use('/.netlify/functions/app', router);
-  server.use((req, res) => {
+  app.use(compression());
+
+  if (isNetlify) {
+    app.use('/.netlify/functions/app', router);
+  } else {
+    app.use(router);
+  }
+
+  const staticRoot = process.env.BLOCKLET_APP_ID ? './' : '../../';
+  const staticDir = path.resolve(__dirname, staticRoot, 'build');
+  app.use(express.static(staticDir, { maxAge: '365d', index: false }));
+  app.use(fallback('index.html', { root: staticDir }));
+
+  app.use((req, res) => {
     res.status(404).send('404 NOT FOUND');
   });
 
   // eslint-disable-next-line no-unused-vars
-  server.use((err, req, res, next) => {
+  app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
   });
 } else {
-  server.use(router);
+  app.use(router);
 }
 
 // Make it serverless
-exports.handler = serverless(server);
-exports.server = server;
+exports.handler = serverless(app);
+exports.server = app;

@@ -1,4 +1,5 @@
 const ForgeSDK = require('@arcblock/forge-sdk');
+const env = require('../libs/env');
 
 module.exports = {
   init(app) {
@@ -32,6 +33,11 @@ module.exports = {
     app.post('/api/did/logout', (req, res) => {
       req.user = null;
       res.json({ user: null });
+    });
+
+    app.get('/api/env', (req, res) => {
+      res.type('script');
+      res.send(`window.env = ${JSON.stringify(env, null, 2)}`);
     });
   },
 };
