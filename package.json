@@ -15,6 +15,7 @@
     "javascript"
   ],
   "dependencies": {
+    "@abtnode/router-adapter": "^0.9.0",
     "@arcblock/did": "^1.0.4",
     "@arcblock/did-auth": "^1.0.7",
     "@arcblock/did-auth-storage-mongo": "^1.0.0",

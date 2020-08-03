@@ -10,12 +10,14 @@ module.exports = {
     process.env.REACT_APP_APP_NAME ||
     process.env.GATSBY_APP_NAME ||
     process.env.APP_NAME ||
-    process.env.appName,
+    process.env.appName ||
+    'Forge Dapp Starter',
   appDescription:
     process.env.REACT_APP_APP_DESCRIPTION ||
     process.env.GATSBY_APP_DESCRIPTION ||
     process.env.APP_DESCRIPTION ||
-    process.env.appDescription,
+    process.env.appDescription ||
+    'Forge Dapp Starter',
   baseUrl:
     process.env.BLOCKLET_BASE_URL ||
     process.env.REACT_APP_BASE_URL ||
@@ -29,6 +31,7 @@ module.exports = {
     process.env.NF_API_PREFIX ||
     process.env.API_PREFIX ||
     process.env.apiPrefix ||
+    process.env.BLOCKLET_PREFIX ||
     '',
   chainId:
     process.env.LOCAL_CHAIN_ID ||
