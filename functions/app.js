@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
 const fallback = require('express-history-api-fallback');
 const ForgeSDK = require('@arcblock/forge-sdk');
+const getRouterAdapter = require('@abtnode/router-adapter');
 
 const isProduction = process.env.NODE_ENV === 'production' || !!process.env.BLOCKLET_APP_ID;
 const isNetlify = process.env.NETLIFY && JSON.parse(process.env.NETLIFY);
@@ -127,7 +128,8 @@ if (isProduction) {
   if (isNetlify) {
     app.use('/.netlify/functions/app', router);
   } else {
-    app.use(router);
+		app.use(router);
+		app.use(getRouterAdapter());
   }
 
   const staticRoot = process.env.BLOCKLET_APP_ID ? './' : '../../';
